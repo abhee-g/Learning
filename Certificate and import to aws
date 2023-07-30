@@ -1,0 +1,38 @@
+How To Generate Certificate and Import In To Certificate Manager In AWS
+
+Certificates are digital documents used to establish the identity of an entity, such as a website, server, or individual. They are issued by Certificate Authorities (CAs) and serve as a way to ensure the authenticity and security of the entity. Certificates are commonly used to enable secure communication over the internet, such as with HTTPS.
+
+A certificate contains the following information:
+
+Public Key: The public key used for encrypting data and establishing secure connections.
+Identity Information: Information about the entity, such as its name and domain.
+Digital Signature: A signature created by the Certificate Authority to validate the authenticity of the certificate.
+
+Please  follow the below steps to generate the Certificate and import into ACM
+============================================================
+First clone the easy-rasa repository
+         git clone https://github.com/OpenVPN/easy-rsa.git
+Then Navigate to the the easyrsa3 folder
+         cd easy-rasa/easyrsa3
+Next we need to initialize new PKI (Public Key infrastructure)
+        ./easyrsa init-pki
+Once PKI initialized we need to build our certificate Authority
+       ./easyrsa build-ca nopass
+Then we need to create out server certificate
+      ./easyrsa build-server-full clientvpndemo.com nopass
+Then we need to create our client certificate
+     ./easyrsa build-client-full Satyajit.clientvpndemo.com nopass
+
+
+To make it easier  Let’s copy all the certificate to one place
+Create a Directory and keep all the certificates on that directoy
+       mkdir act
+cp  pki/ca.crt acm
+cp pki/issued/clientvpndemo.com.crt acm
+cp pki/issued/satyajit.clientvpndemo.com.crt acm
+cp pki/private/clientvpndemo.com.key acm
+cp pki/private/satyajit.clientvpndemo.com.key acm
+
+Importing Certificate to AWS using CLI
+=================================
+aws acm import-certificate --certificate fileb:///Users/satyajitsamantaray/easy-rsa/easyrsa3/acm/satyajit.clientvpndemo.com.crt --private-key fileb:///Users/satyajitsamantaray/easy-rsa/easyrsa3/acm/satyajit.clientvpndemo.com.key
